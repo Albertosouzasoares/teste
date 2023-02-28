@@ -1,0 +1,23 @@
+backend:
+  name: git-gateway
+  branch: master
+
+media_folder: "images/uploads"
+
+collections:
+  - name: "posts"
+    label: "Posts"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Layout", name: "layout", widget: "hidden", default: "post"}
+      - {label: "Titulo", name: "title", widget: "string"}
+      - {label: "Descrição", name: "description", widget: "string"}
+      - {label: "Tags", name: "tag", widget: "string"}
+      - {label: "Categories", name: "categories", widget: "string"}
+      - {label: "Categoria", name: "categoria", widget: "string"}
+      - {label: "Data", name: "date", widget: "datetime", dateFormat: "YYYY-MM-DD HH:mm:ss Z"}
+      - {label: "Imagem de capa (SRC)", name: "image", widget: "image"}
+      - {label: "Imagem de capa (Alt)", name: "image-alt", widget: "string"}
+      - {label: "Body", name: "body", widget: "markdown"}

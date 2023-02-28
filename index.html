@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+
+	<!-- Meta Dados -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<meta name="application-name" content="Astro Fantástico">
+    <meta name="author" content="Astro Fantástico">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/midias/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/midias/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/midias/favicons/android-icon-192x192.png">
+    <link rel="apple-touch-icon" href="/assets/midias/favicons/apple-touch-icon-180x180.png">
+
+	<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+	<title>Content Manager</title>
+	<style type="text/css">
+
+		/* Botão para insserir vídeo e imagem */
+		#button-img-video {
+			background-color: #17A2B8;
+			border-radius: 50%;
+			height: 50px;
+			width: 50px;
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: fixed;
+			z-index: 100;
+			bottom: 25px;
+			right: 25px;
+			cursor: pointer;
+		} #button-img-video i {
+			font-size: 20px;
+			color: #FFFFFF;
+		}
+
+		/* Copy da tag especial do vídeo e imagem */
+		#imagem-video {
+			background-color: #17A2B8;
+			border-radius: 6px;
+			display: block;
+			padding: 20px;
+			position: fixed;
+			z-index: 1000;
+			left: calc(50% - 346.655px);
+			top: calc(50% - 60px);
+		} #imagem-video div {
+			border: 2px solid #DFDFE3;
+			border-radius: 6px;
+			display: flex;
+			align-items: center;
+		}
+		#imagem-video input, #imagem-video button {
+			background: none;
+			padding: 4px 12px;
+			color: #FFFFFF;
+			font-size: 16px;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		} #imagem-video input::placeholder {
+			color: #FFFFFF	;
+		}
+		#imagem-video button {
+			background-color: #DFDFE3;
+			color: #7A8291;
+			border: none;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- Botão para insserir vídeo e imagem -->
+	<button id="button-img-video" onclick="imgVideo()">
+		<i class="fa-solid fa-photo-film"></i>
+	</button>
+
+	<!-- JS icones -->
+    <script type="text/javascript" src="https://kit.fontawesome.com/e3320de23a.js" crossorigin="anonymous"></script>
+
+	<!-- Include the script that builds the page and powers Netlify CMS -->
+	<script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+
+	<!-- JS -->
+	<script>
+
+		// Netlify login
+	  	if (window.netlifyIdentity) {
+	    	window.netlifyIdentity.on("init", user => {
+	      		if (!user) {
+	        		window.netlifyIdentity.on("login", () => {
+	        	  		document.location.href = "/admin/";
+	        		});
+	      		}
+	    	});
+	  	}
+
+	  	// Verifique em que url está para remover o botão
+		if (window.location.href === "http://localhost:4000/admin/#/") {
+			document.body.removeChild(document.getElementById("button-img-video"));
+		}
+
+		// Abri uma janela para colocar os dados do vídeo ou imagem
+	  	function imgVideo() {
+
+	  		// Verifica se existe o elemento imagem-video se existir remova se não crie um novo elemento
+			if (document.getElementById("imagem-video")) {
+
+				// Remova o elemento
+				document.body.removeChild(document.getElementById("imagem-video"))
+			} else {
+
+				// Crie um elemento div
+				const div = document.createElement("div");
+
+				// Insira um id
+				div.id = "imagem-video";
+
+				// Insira no corpo da pagina
+				document.querySelectorAll("body")[0].appendChild(div);
+
+				// Insira mais elementos na div
+				div.innerHTML = '<div style="margin-bottom: 20px;"><input style="border-right: 2px solid #DFDFE3;" type="text" name="img" id="copy-img" placeholder="Insira o nome da imagem"><input type="text" name="img" id="copy-alt" placeholder="Insira o texto alternativo da imagem"><button onclick="copyImg()">Prosseguir</button></div><div><input style="border-right: 2px solid #DFDFE3;" type="text" name="video" id="copy-title" placeholder="Insira o título do vídeo"><input type="text" name="video" id="copy-video" placeholder="Insira a url do vídeo"><button onclick="copyVideo1()">Prosseguir</button></div>';
+			}
+		}
+
+		// Função para copia a tag especial da imagem
+		function copyImg() {
+
+			// Pegue o valor dos inputs
+			const inputImg = document.getElementById("copy-img").value;
+			const inputAlt = document.getElementById("copy-alt").value;
+
+			// Verifique se as variaveis estão vazias
+			if (inputImg && inputAlt !== "") {
+
+				// Crie uma variavel com o elemento textarea
+				const tagCopy = document.createElement('textarea');
+
+				// Inssira a tag no elemento
+				tagCopy.value = `{% include image.html src="/images/uploads/${inputImg}" alt="${inputAlt}" %}`;
+
+				// Adicione o elemento ao corpo do site
+				document.body.appendChild(tagCopy);
+
+				// Selecione o texto do elemento e copie o texto
+				tagCopy.select();
+           	 	document.execCommand("copy");
+
+				// Destrua o elemento
+				document.body.removeChild(tagCopy);
+				document.body.removeChild(document.getElementById("imagem-video"))
+			} else {
+				window.alert("Prencha todos os campos!");
+			}
+		}
+
+		// Função para copia a tag especial do vídeo
+		function copyVideo1() {
+
+			// Pegue o valor dos inputs
+			const inputTitle = document.getElementById("copy-title").value;
+			const inputVideo = document.getElementById("copy-video").value;
+
+			// Verifique se as variaveis estão vazias
+			if (inputTitle && inputVideo !== "") {
+
+				// Crie uma variavel com o elemento textarea
+				const tagCopy = document.createElement('textarea');
+
+				// Inssira a tag no elemento
+				tagCopy.value = `{% include video.html src="${inputVideo}" title="${inputTitle}" %}`;
+
+				// Adicione o elemento ao corpo do site
+				document.body.appendChild(tagCopy);
+
+				// Selecione o texto do elemento e copie o texto
+				tagCopy.select();
+           	 	document.execCommand("copy");
+
+				// Destrua o elemento
+				document.body.removeChild(tagCopy);
+				document.body.removeChild(document.getElementById("imagem-video"))
+			} else {
+				window.alert("Prencha todos os campos!");
+			}
+		}
+	</script>
+</body>
+</html>
